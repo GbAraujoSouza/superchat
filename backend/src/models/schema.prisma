@@ -15,18 +15,34 @@ model User {
   salt String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  sentMesages Message[] @relation("sentMessages")
-  receivedMessages Message[] @relation("receivedMessages")
+
+  messages Message[] 
+  chats Chat[]
+
+}
+
+model Chat {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messagesIds String[]
+  messages Message[]
+
+  participantsIds String[]
+  participants User[]
 }
 
 model Message {
   id String @id @default(uuid())
   content String 
+
+  chatId String
+  chat Chat @relation(fields: [chatId], references: [id])
+
   senderId String
-  receiverId String
+  sender User @relation(fields: [senderId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  sender User @relation("sentMessages", fields: [senderId], references: [id])
-  receiver User @relation("receivedMessages", fields: [receiverId], references: [id])
 }
